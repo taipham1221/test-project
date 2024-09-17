@@ -46,7 +46,12 @@ pipeline{
                         sh 'ls -la ./target'
                     }
                 }
-                container('docker')
+                container('docker'){
+                    script{
+                        sh 'docker ps -a'
+                        sh 'docker build -t test-project .'
+                    }
+                }
             }
         }
     }
