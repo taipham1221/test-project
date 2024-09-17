@@ -24,12 +24,11 @@ pipeline {
             steps {
                 container('maven') {
                     script {
-                        //sh 'mvn clean package'
                         sh 'mvn clean package '
                     }                   
                 }
             }
         }
-        
+    }
 	
 }
