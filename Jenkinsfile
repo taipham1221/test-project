@@ -2,14 +2,10 @@ pipeline {
     agent { label 'maven' }
     environment {
         DATE_TAG = sh(script: 'date +"%Y%m%d%H%M"', returnStdout: true).trim()
-        GIT_REPO_URL = 'https://git.hdbank.com.vn/digital-core-dev-team/business-services/card-business-services/card-transaction-service.git' 
-		GIT_REPO_CONFIG = 'https://git.hdbank.com.vn/digital-core-dev-team/vault-config.git' 
+        GIT_REPO_URL = 'https://github.com/taipham1221/test-project' 
         GIT_BRANCH = 'main'
-        GIT_CREDENTIALSID = 'app_cicd_gitlab'
-        DOCKER_CREDENTIALSID = 'docker-registry-uat'
-        SONARQUBE_CREDENTIALSID = 'sonarqube-test'
-        DOCKER_REPO_URL = 'docker-registry-uat.hdbank.com.vn'
-        PROJECT_NAME = 'card-transaction-service' 
+        GIT_CREDENTIALSID = 'github-credentials'
+        PROJECT_NAME = 'test-project' 
     }
     stages {
         stage('Pull source repo gitlab') {
