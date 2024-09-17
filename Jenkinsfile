@@ -1,10 +1,10 @@
 pipeline {
-    agent { label 'maven' }
+    agent any
     environment {
         DATE_TAG = sh(script: 'date +"%Y%m%d%H%M"', returnStdout: true).trim()
         GIT_REPO_URL = 'https://github.com/taipham1221/test-project' 
         GIT_BRANCH = 'main'
-        GIT_CREDENTIALSID = 'github-credentials'
+        GIT_CREDENTIALSID = 'github_ssh'
         PROJECT_NAME = 'test-project' 
     }
     stages {
