@@ -20,34 +20,12 @@ pipeline{
                       - cat
                       tty: true
                       volumeMounts:
-                      - name: dind-certs
-                        mountPath: /certs
-                      env:
-                      - name: DOCKER_TLS_CERTDIR
-                        value: /certs
-                      - name: DOCKER_CERT_PATH
-                        value: /certs
-                      - name: DOCKER_TLS_VERIFY
-                        value: 1
-                      - name: DOCKER_HOST
-                        value: tcp://localhost:2376
-                    - name: dind
-                      image: docker:dind
-                      securityContext:
-                        privileged: true
-                      env:
-                      - name: DOCKER_TLS_CERTDIR
-                        value: /certs
-                      volumeMounts:
-                      - name: dind-storage
-                        mountPath: /var/lib/docker
-                      - name: dind-certs
-                        mountPath: /certs
+                      - mountPath: /var/run/docker.sock
+                      name: docker-sock
                 volumes:
-                    - name: dind-storage
-                    emptyDir: {}
-                    - name: dind-certs
-                    emptyDir: {}
+                - name: docker-sock
+                  hostPath:
+                    path: /var/run/docker.sock 
             '''
         }
     }
@@ -87,15 +65,20 @@ pipeline{
         }
         stage('Build and Push Docker Image'){
             steps{
-                container('dind'){
+                container('docker'){
                     script{
-                        withDockerRegistry(credentialsId: "${DOCKER_CREDENTIALSID}", url: "https://${DOCKER_REPO_URL}") {
-                            sh 'docker build -t ${PROJECT_NAME}:${DATE_TAG} .'
-                            sh 'docker tag ${PROJECT_NAME}:${DATE_TAG} ${DOCKER_REPO_URL}/${PROJECT_NAME}:${DATE_TAG}'
-                            sh 'docker push ${DOCKER_REPO_URL}/${PROJECT_NAME}:${DATE_TAG}'
-                        }
+                        sh 'docker build -t taipham1221/testing-image:latest .'
+                        sh "docker login -u taipham -p ${DOCKER_CREDENTIALSID}"
+                        sh 'docker push taipham1221/testing-image:latest'
                     }
                 }
+            }
+        }
+    }
+    post{
+        always{
+            container('docker'){
+                sh 'docker logout'
             }
         }
     }
