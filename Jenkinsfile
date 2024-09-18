@@ -21,7 +21,7 @@ pipeline{
                       tty: true
                       volumeMounts:
                       - mountPath: /var/run/docker.sock
-                      name: docker-sock
+                        name: docker-sock  # Correct volume mount name
                 volumes:
                 - name: docker-sock
                   hostPath:
@@ -35,7 +35,6 @@ pipeline{
         GIT_CREDENTIALSID = 'github-credential'
         DATE_TAG = sh(script: 'date +"%Y%m%d%H%M"', returnStdout: true).trim()
         PROJECT_NAME = 'test-project' 
-
         DOCKER_CREDENTIALSID = 'docker-credential' 
         DOCKER_REPO_URL = 'docker.io/taipham1221'
     }
@@ -67,9 +66,9 @@ pipeline{
             steps{
                 container('docker'){
                     script{
-                        sh 'docker build -t taipham1221/testing-image:latest .'
-                        sh "docker login -u taipham -p ${DOCKER_CREDENTIALSID}"
-                        sh 'docker push taipham1221/testing-image:latest'
+                        sh 'docker build -t taipham1221/test-project:latest .'
+                        sh "docker login -u taipham1221 -p ${DOCKER_CREDENTIALSID}"
+                        sh 'docker push taipham1221/test-project:latest'
                     }
                 }
             }
