@@ -14,20 +14,41 @@ pipeline{
                       command:
                       - cat
                       tty: true
-                    - name: dind
-                      image: docker:24.0.2-dind
-                      securityContext:
-                        privileged: true  # Required for Docker daemon to run
-                      volumeMounts:
-                      - name: docker-graph-storage
-                        mountPath: /var/lib/docker
+                    - name: docker
+                      image: docker:latest
                       command:
                       - cat
                       tty: true
+                      volumeMounts:
+                      - name: dind-certs
+                        mountPath: /certs
+                      env:
+                      - name: DOCKER_TLS_CERTDIR
+                        value: /certs
+                      - name: DOCKER_CERT_PATH
+                        value: /certs
+                      - name: DOCKER_TLS_VERIFY
+                        value: 1
+                      - name: DOCKER_HOST
+                        value: tcp://localhost:2376
+                    - name: dind
+                      image: docker:dind
+                      securityContext:
+                        privileged: true
+                      env:
+                      - name: DOCKER_TLS_CERTDIR
+                        value: /certs
+                      volumeMounts:
+                      - name: dind-storage
+                        mountPath: /var/lib/docker
+                      - name: dind-certs
+                        mountPath: /certs
+                volumes:
+                    - name: dind-storage
+                    emptyDir: {}
+                    - name: dind-certs
+                    emptyDir: {}
             '''
-            volumes:
-            - name: docker-graph-storage
-              emptyDir: {}
         }
     }
     environment {
