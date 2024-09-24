@@ -105,7 +105,7 @@ pipeline {
                     git branch: "${GIT_BRANCH}",
                         credentialsId: "${GIT_CREDENTIALSID}",
                         url: "${GIT_DEPLOYMENT_REPO_URL}"
-                    withCredentials([sshUserPrivateKey(credentialsId: "${GIT_CREDENTIALSID}", gitToolName: 'Default')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: "${GIT_CREDENTIALSID}")]) {
                             sh '''
                                 git config --global user.name "Jenkins"
                                 git config --global user.email "jenkins@localhost.local"
