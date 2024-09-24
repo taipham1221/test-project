@@ -105,7 +105,7 @@ pipeline {
                 script {
                     git branch: "${GIT_BRANCH}",
                         credentialsId: "${GIT_CREDENTIALSID}",
-                        url: "${GIT_DEPLOYMENT_REPO_URL}"
+                        url: "${GIT_DEPLOYMENT_REPO_URL}" 
                     withCredentials([gitUsernamePassword(credentialsId: "${GIT_CREDENTIALSID_UP}", gitToolName: 'Default')]) {
                             sh '''
                                 git config --global user.name "Jenkins"
