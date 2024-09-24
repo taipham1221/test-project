@@ -80,7 +80,7 @@ pipeline {
             container('docker'){
                 script{
                     withCredentials([usernamePassword(credentialsId: 'docker-credential', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                        sh 'docker build -t taipham1221/test-project:latest .'
+                        sh 'docker build -t taipham1221/test-project:${DATE_TAG} .'
                         sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
                         sh 'docker push taipham1221/test-project:${DATE_TAG}'
                     }
