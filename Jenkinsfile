@@ -109,7 +109,7 @@ pipeline {
                             sh '''
                                 git config --global user.name "Jenkins"
                                 git config --global user.email "jenkins@localhost.local"
-                                sed -i "s/test-project:[0-9]*/test-project:${DATE_TAG}/" business-services/test-project/test-project.yaml
+                                sed -i "s/test-project:[0-9]*/test-project:${DATE_TAG}/" hello-world/deploy.yaml
                                 git add hello-world/deploy.yaml
                                 git commit -m "'Updates image with $PROJECT_NAME - ${DATE_TAG}'"
                                 git push -f origin main
