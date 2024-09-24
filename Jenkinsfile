@@ -33,12 +33,13 @@ pipeline {
         GIT_REPO_URL = 'https://github.com/taipham1221/test-project'
         GIT_BRANCH = 'main'
         GIT_CREDENTIALSID = 'github-credential'
+        GIT_CREDENTIALSID_UP = 'github-credential-up'
         DATE_TAG = sh(script: 'date +"%Y%m%d%H%M"', returnStdout: true).trim()
         PROJECT_NAME = 'test-project' 
         DOCKER_CREDENTIALSID = 'docker-credential' 
         DOCKER_REPO_URL = 'docker.io/taipham1221'
         SONARQUBE_CREDENTIALSID = 'sonar-credential'
-        GIT_DEPLOYMENT_REPO_URL='git@github.com:taipham1221/test-project-deployment.git'
+        GIT_DEPLOYMENT_REPO_URL='https://github.com/taipham1221/test-project-deployment.git'
     }
   stages {
     stage('Pull code'){
@@ -105,7 +106,7 @@ pipeline {
                     git branch: "${GIT_BRANCH}",
                         credentialsId: "${GIT_CREDENTIALSID}",
                         url: "${GIT_DEPLOYMENT_REPO_URL}"
-                    withCredentials([sshUserPrivateKey(credentialsId: "${GIT_CREDENTIALSID}", keyFileVariable: 'SSH_KEY')]) {
+                    withCredentials([gitUsernamePassword(credentialsId: "${GIT_CREDENTIALSID_UP}", gitToolName: 'Default')]) {
                             sh '''
                                 git config --global user.name "Jenkins"
                                 git config --global user.email "jenkins@localhost.local"
