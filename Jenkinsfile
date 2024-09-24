@@ -38,6 +38,7 @@ pipeline {
         DOCKER_CREDENTIALSID = 'docker-credential' 
         DOCKER_REPO_URL = 'docker.io/taipham1221'
         SONARQUBE_CREDENTIALSID = 'sonar-credential'
+        GIT_DEPLOYMENT_REPO_URL='https://github.com/taipham1221/test-project-deployment.git'
     }
   stages {
     stage('Pull code'){
@@ -81,8 +82,38 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'docker-credential', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                         sh 'docker build -t taipham1221/test-project:latest .'
                         sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
-                        sh 'docker push taipham1221/test-project:latest'
+                        sh 'docker push taipham1221/test-project:${DATE_TAG}'
                     }
+                }
+            }
+        }
+    }
+    stage('Clean file') {
+      steps {
+          container('maven') {
+              script {
+                  sh 'rm -rf *'
+              }                   
+          }
+      }
+    }
+    stage('Push deployment'){
+        steps{
+            container('jnlp'){
+                script {
+                    git branch: "${GIT_BRANCH}",
+                        credentialsId: "${GIT_CREDENTIALSID}",
+                        url: "${GIT_DEPLOYMENT_REPO_URL}"
+                    withCredentials([gitUsernamePassword(credentialsId: "${GIT_CREDENTIALSID}", gitToolName: 'Default')]) {
+                            sh '''
+                                git config --global user.name "Jenkins"
+                                git config --global user.email "jenkins@localhost.local"
+                                sed -i "s/test-project:[0-9]*/test-project:${DATE_TAG}/" business-services/test-project/test-project.yaml
+                                git add hello-world/deploy.yaml
+                                git commit -m "'Updates image with $PROJECT_NAME - ${DATE_TAG}'"
+                                git push -f origin main
+                            '''
+                        }
                 }
             }
         }
