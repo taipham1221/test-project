@@ -37,6 +37,7 @@ pipeline {
         PROJECT_NAME = 'test-project' 
         DOCKER_CREDENTIALSID = 'docker-credential' 
         DOCKER_REPO_URL = 'docker.io/taipham1221'
+        SONARQUBE_CREDENTIALSID = 'sonar-credential'
     }
   stages {
     stage('Pull code'){
@@ -62,6 +63,17 @@ pipeline {
             }
         }
     }
+    stage('Build sonarqube') {
+            steps {
+                container('maven') {
+                    script {
+                        withSonarQubeEnv(credentialsId: "${SONARQUBE_CREDENTIALSID}") {
+                            sh "mvn clean verify sonar:sonar -Dsonar.projectKey=test-project -Dsonar.projectName='test-project'"
+                        }
+                    }                   
+                }
+            }
+        }
     stage('Build and Push Docker Image'){
         steps{
             container('docker'){
