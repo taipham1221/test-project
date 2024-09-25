@@ -33,7 +33,6 @@ pipeline {
         GIT_REPO_URL = 'https://github.com/taipham1221/test-project'
         GIT_BRANCH = 'main'
         GIT_CREDENTIALSID = 'github-credential'
-        GIT_CREDENTIALSID_UP = 'github-credential-up'
         DATE_TAG = sh(script: 'date +"%Y%m%d%H%M"', returnStdout: true).trim()
         PROJECT_NAME = 'test-project' 
         DOCKER_CREDENTIALSID = 'docker-credential' 
@@ -106,7 +105,7 @@ pipeline {
                     git branch: "${GIT_BRANCH}",
                         credentialsId: "${GIT_CREDENTIALSID}",
                         url: "${GIT_DEPLOYMENT_REPO_URL}"
-                    withCredentials([gitUsernamePassword(credentialsId: "${GIT_CREDENTIALSID_UP}", gitToolName: 'Default')]) {
+                    withCredentials([gitUsernamePassword(credentialsId: "${GIT_CREDENTIALSID}", gitToolName: 'Default')]) {
                             sh '''
                                 git config --global user.name "Jenkins"
                                 git config --global user.email "jenkins@localhost.local"
